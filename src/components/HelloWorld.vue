@@ -6,7 +6,11 @@
       check out the
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
     </p>
+<<<<<<< HEAD
     <h3>Installed CLI Plugins</h3>
+=======
+    <h3>Inmsuuimsus</h3>
+>>>>>>> 815e73e191fb2a52dfe78b00c350f2aa590a956f
     <ul>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>

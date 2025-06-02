@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> 815e73e191fb2a52dfe78b00c350f2aa590a956f
 # vuetest
 
 ## Project setup
@@ -24,4 +27,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+<<<<<<< HEAD
 >>>>>>> master
+=======
+>>>>>>> 815e73e191fb2a52dfe78b00c350f2aa590a956f
