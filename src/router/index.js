@@ -1,17 +1,11 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from "vue-router";
-
+import LoginView from '../views/user/LoginView.vue';
+import SignUp from '../views/user/SignUp.vue';
 const routes = [
-  {
-    path: "/",
-    name: "main",
-    component: () => import("../components/main.vue"),
-  },
-  {
-    path: "/test",
-    name: "test",
-    component: () => import("../components/test.vue"),
-  },
+   { path: '/login', name: 'login', component: LoginView },
+  { path: '/signup', name: 'signup', component: SignUp },
+
 ];
 
 const router = createRouter({
