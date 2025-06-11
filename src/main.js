@@ -1,15 +1,11 @@
-<<<<<<< HEAD
-// src/main.js
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router' // ✅ 이 줄 추가
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+// import store from './store'; // Vuex store를 사용할 경우 주석 해제
 
-createApp(App).use(router).mount('#app')
-=======
-import { createApp } from 'vue'
-import App from './App.vue'
-import store from './store'; 
-import router from "./router";
+const app = createApp(App);
 
-createApp(App).use(store).use(router).mount('#app')
->>>>>>> 815e73e191fb2a52dfe78b00c350f2aa590a956f
+app.use(router);
+// app.use(store); // Vuex store를 사용할 경우 주석 해제
+
+app.mount('#app');

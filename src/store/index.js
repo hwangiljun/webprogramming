@@ -1,4 +1,5 @@
-import { createStore } from 'vuex';
+import { createStore } from 'vuex'
+import travel from './travel'
 
 export default createStore({
   state: {
@@ -6,10 +7,10 @@ export default createStore({
   },
   mutations: {
     login(state, userData) {
-      state.user = userData;
+      state.user = userData
     },
     logout(state) {
-      state.user = null;
+      state.user = null
     },
   },
   actions: {
@@ -19,4 +20,7 @@ export default createStore({
     isLoggedIn: state => !!state.user,
     userInfo: state => state.user,
   },
-});
+  modules: {
+    travel
+  }
+})
