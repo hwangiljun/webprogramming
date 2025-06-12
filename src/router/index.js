@@ -6,13 +6,14 @@ import HomePage from '../views/HomePage.vue'
 import LoginView from '../views/user/LoginView.vue'
 import SignUp from '../views/user/SignUp.vue'
 import MyPage from '../views/user/MyPage.vue'; 
-
+import AdminPage from '../views/admin/AdminPage.vue';
 // 라우트 정의
 const routes = [
   { path: '/', name: 'HomePage', component: HomePage },
   { path: '/login', name: 'login', component: LoginView },
   { path: '/signup', name: 'signup', component: SignUp },
   { path: '/mypage', component: MyPage },
+    {path: '/admin', component: AdminPage},
 ]
 
 // 라우터 생성
