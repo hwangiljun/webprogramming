@@ -5,12 +5,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import LoginView from '../views/user/LoginView.vue'
 import SignUp from '../views/user/SignUp.vue'
+import MyPage from '../views/user/MyPage.vue'; 
 
 // 라우트 정의
 const routes = [
   { path: '/', name: 'HomePage', component: HomePage },
   { path: '/login', name: 'login', component: LoginView },
   { path: '/signup', name: 'signup', component: SignUp },
+  { path: '/mypage', component: MyPage },
 ]
 
 // 라우터 생성
