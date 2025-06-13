@@ -51,24 +51,27 @@
 <script>
 export default {
   name: 'AppHeader',
-  data() {
-    return {
-      isLoggedIn: false, // 실제로는 상태관리 또는 인증 로직과 연동
-    };
+  computed: { // data() 대신 computed 사용
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn; // Vuex getter 연결
+    }
   },
   methods: {
     logout() {
-      // 로그아웃 처리 (토큰 삭제 등)
-      this.isLoggedIn = false;
+      this.$store.commit('logout'); // Vuex mutation 호출
+      localStorage.removeItem('token'); // 실제 토큰 삭제 로직 추가
       this.$router.push('/');
-    },
+    }
   },
-  mounted() {
-    // 실제 서비스에서는 로그인 상태를 확인해서 isLoggedIn을 갱신해야 합니다.
-    // 예시: this.isLoggedIn = !!localStorage.getItem('token');
-  },
+  mounted() { // 초기 로그인 상태 체크 (선택 사항)
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.$store.commit('login', { token }); // 저장된 토큰으로 상태 갱신
+    }
+  }
 };
 </script>
 <style scoped>
-/* Tailwind CSS 클래스는 그대로 유지하며 필요한 추가 스타일만 여기에 작성합니다. */
+
+
 </style>
