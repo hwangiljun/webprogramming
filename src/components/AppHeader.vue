@@ -10,12 +10,10 @@
           Korea Tourism
         </h1>
         <ul class="hidden md:flex items-center space-x-6 text-gray-600 font-medium">
-          <li><a href="#" class="hover:text-blue-600 transition-colors">recommend</a></li>
-          <li><a href="#" class="hover:text-blue-600 transition-colors">list</a></li>
-          <li><a href="#" class="hover:text-blue-600 transition-colors">travel Detail</a></li>
-        </ul>
+          <li><router-link to="/" class="hover:text-blue-600 transition-colors">recommend</router-link></li>
+          <li><router-link to="/list" class="hover:text-blue-600 transition-colors">list</router-link></li>
+          </ul>
       </div>
-      <!-- 버튼 그룹: 로그인 여부에 따라 다르게 표시 -->
       <div class="flex items-center space-x-2">
         <template v-if="isLoggedIn">
           <button
@@ -71,3 +69,6 @@ export default {
   },
 };
 </script>
+<style scoped>
+/* Tailwind CSS 클래스는 그대로 유지하며 필요한 추가 스타일만 여기에 작성합니다. */
+</style>
