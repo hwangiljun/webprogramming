@@ -1,144 +1,74 @@
 <template>
-  <div class="travel-detail-page" v-if="travel">
-    <img :src="travel.image" :alt="travel.title" class="detail-image" />
-    <div class="detail-content">
-      <h1 class="detail-title">{{ travel.title }}</h1>
-      <p class="detail-description">{{ travel.description }}</p>
-      <div class="detail-info">
-        <p><strong>위치:</strong> {{ travel.location }}</p>
-        <p><strong>추천 계절:</strong> {{ travel.season }}</p>
-        <p><strong>테마:</strong> {{ travel.theme }}</p>
-      </div>
-      <button class="back-button" @click="goBack">목록으로 돌아가기</button>
+  <main class="bg-gray-50 py-8 md:py-12">
+    <!-- 로딩 중일 때 -->
+    <div v-if="loading" class="text-center py-24">
+      <p class="text-xl text-gray-500">여행지 상세 정보를 불러오는 중입니다...</p>
     </div>
-  </div>
-  <div v-else-if="loading" class="loading-message">
-    <p>여행지 상세 정보를 불러오는 중...</p>
-  </div>
-  <div v-else class="not-found">
-    <p>여행지 정보를 찾을 수 없습니다.</p>
-  </div>
+
+    <!-- 로딩 완료 후 데이터가 있을 때 -->
+    <article v-else-if="travelDetail && travelDetail.id" class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div>
+        <img 
+          :src="travelDetail.imageUrl" 
+          :alt="travelDetail.title" 
+          class="w-full h-64 md:h-96 object-cover" 
+          :onerror="`this.onerror=null;this.src='${travelDetail.fallbackUrl}';`"
+        >
+      </div>
+      <div class="p-6 md:p-10">
+        <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-4">{{ travelDetail.title }}</h1>
+        <p class="text-lg text-gray-600 mb-8 leading-relaxed">{{ travelDetail.description }}</p>
+        
+        <div class="border-t pt-6">
+          <p class="text-gray-700">
+            <span class="font-semibold">테마:</span>
+            <span v-for="(type, index) in travelDetail.type.split(', ')" :key="index" class="inline-block bg-blue-100 text-blue-800 text-sm font-semibold mr-2 px-3 py-1 rounded-full">
+              {{ type }}
+            </span>
+          </p>
+        </div>
+
+        <div class="mt-12 text-center">
+          <button @click="goBack" class="bg-gray-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-700 transition-colors">
+            목록으로 돌아가기
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <!-- 데이터가 없을 때 -->
+    <div v-else class="text-center py-24">
+      <p class="text-xl text-gray-500">여행지 정보를 찾을 수 없습니다.</p>
+    </div>
+  </main>
 </template>
 
 <script>
-// src/views/Travel/TravelDetailPage.vue 에서 src/api/travelApi.js 로 가려면 두 단계 위로 올라간 다음 api 폴더로
-import { getTravelDetail } from '../../api/travelApi';
+import { mapState, mapActions } from 'vuex';
 
 export default {
-  name: 'TravelDetailPage', // <-- 이 부분을 'TravelDetailPage'로 변경
-  props: ['id'],
-  data() {
-    return {
-      travel: null,
-      loading: false,
-      error: null,
-    };
-  },
-  watch: {
+  name: 'TravelDetailPage',
+  props: {
     id: {
-      immediate: true,
-      handler(newId) {
-        if (newId) {
-          this.fetchTravelDetail(newId);
-        }
-      },
-    },
+      type: String,
+      required: true
+    }
+  },
+  computed: {
+    ...mapState('travel', ['travelDetail', 'loading'])
   },
   methods: {
-    async fetchTravelDetail(id) {
-      this.loading = true;
-      this.error = null;
-      this.travel = null;
-
-      try {
-        const response = await getTravelDetail(id);
-        this.travel = response;
-      } catch (err) {
-        console.error(`Error fetching travel detail for ID ${id}:`, err);
-        this.error = err;
-      } finally {
-        this.loading = false;
-      }
-    },
+    ...mapActions('travel', ['fetchTravelDetail']),
     goBack() {
       this.$router.push('/list');
-    },
+    }
   },
+  created() {
+    this.fetchTravelDetail(this.id);
+  },
+  // 컴포넌트가 사라질 때 store의 상세 정보를 비워줍니다.
+  unmounted() {
+    this.$store.commit('travel/resetTravels');
+  }
 };
 </script>
-
-<style scoped>
-/* (기존 스타일 유지) */
-.travel-detail-page {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.detail-image {
-  width: 100%;
-  max-height: 450px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 30px;
-}
-
-.detail-content {
-  width: 100%;
-  padding: 0 20px;
-  text-align: left;
-}
-
-.detail-title {
-  font-size: 38px;
-  color: #2c3e50;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.detail-description {
-  font-size: 18px;
-  line-height: 1.8;
-  color: #555;
-  margin-bottom: 30px;
-}
-
-.detail-info p {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #666;
-}
-
-.detail-info strong {
-  color: #333;
-}
-
-.back-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 17px;
-  margin-top: 40px;
-  transition: background-color 0.3s ease;
-}
-
-.back-button:hover {
-  background-color: #0056b3;
-}
-
-.loading-message, .not-found {
-  text-align: center;
-  font-size: 20px;
-  color: #888;
-  margin-top: 50px;
-}
-</style>
