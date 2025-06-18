@@ -47,7 +47,7 @@ export const updateUserInfo = async (data) => {
 
 // 내가 쓴 리뷰 조회
 export const fetchMyReviews = async () => {
-  const res = await fetch('http://127.0.0.1:5000', { method: 'GET', credentials: 'include' });
+  const res = await fetch('http://127.0.0.1:5000/api/reviews/user/<string:user_id>', { method: 'GET', credentials: 'include' });
   if (!res.ok) throw new Error('내 리뷰 조회 실패');
   return await res.json();
 };
@@ -61,7 +61,7 @@ export const fetchMyRecommends = async () => {
 
 // 회원 탈퇴
 export const deleteUser = async ({ password }) => {
-  const res = await fetch('http://127.0.0.1:5000', {
+  const res = await fetch('http://127.0.0.1:5000/api/user/delete', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -73,7 +73,7 @@ export const deleteUser = async ({ password }) => {
 
 // 여행지 목록 불러오기
 export const fetchPlaces = async () => {
-  const res = await fetch('http://127.0.0.1:5000', {
+  const res = await fetch('http://127.0.0.1:5000/api/destinations/list', {
     method: 'GET',
     credentials: 'include'
   });
@@ -83,7 +83,7 @@ export const fetchPlaces = async () => {
 
 // 여행지 추가
 export const addPlace = async (data) => {
-  const res = await fetch('http://127.0.0.1:5000', {
+  const res = await fetch('http://127.0.0.1:5000/api/destinations/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -95,7 +95,7 @@ export const addPlace = async (data) => {
 
 // 여행지 삭제
 export const deletePlace = async () => {
-  const res = await fetch(`http://127.0.0.1:5000`, {
+  const res = await fetch(`http://127.0.0.1:5000/api/destinations/delete/<string:dest_id>`, {
     method: 'DELETE',
     credentials: 'include'
   });
