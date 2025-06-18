@@ -15,7 +15,10 @@ export default {
   name: 'App',
   components: {
     AppHeader
+  },
+  created() {
+    // 앱이 시작될 때 로그인 상태 복구
+    this.$store.dispatch('fetchUser');
   }
 }
 </script>
-```
