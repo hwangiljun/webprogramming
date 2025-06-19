@@ -42,15 +42,19 @@
       </section>
 
       <!-- 내가 쓴 리뷰 -->
-      <section v-if="selectedMenu === 'myreviews'" class="mypost-list">
-        <div class="form-container">
-          <h2>내가 쓴 리뷰</h2>
-          <ul class="item-list">
-            <li v-for="review in pagedReviews" :key="review.id" class="item-row">
-              <span class="item-title">{{ review.title }}</span>
-              <span class="item-date">{{ formatDate(review.createdAt) }}</span>
-            </li>
-          </ul>
+       <section v-if="selectedMenu === 'myreviews'" class="mypost-list">
+    <div class="form-container">
+      <h2>내가 쓴 리뷰</h2>
+      <ul class="item-list">
+        <li 
+          v-for="review in pagedReviews" 
+          :key="review.id" 
+          class="item-row"
+          @click="goToTravelDetail(review.dest_id)" 
+        >
+          <span class="item-title">{{ review.content }}</span>
+        </li>
+      </ul>
           <div class="pagination" v-if="totalReviewPages > 0" style="margin-top:20px; display:flex; justify-content:center; gap:8px;">
             <button @click="changeReviewPage(currentReviewPage - 1)" :disabled="currentReviewPage === 1">이전</button>
             <button v-for="page in totalReviewPages" :key="page" @click="changeReviewPage(page)" :class="{active: currentReviewPage === page}">
@@ -87,11 +91,8 @@
       <section class="withdraw-form" v-if="selectedMenu === 'withdraw'">
         <div class="form-container">
           <h2>회원 탈퇴</h2>
-          <input type="password" v-model="withdrawPw" placeholder="현재 비밀번호 입력" />
-          <div style="margin-top: 10px;">
-            <input type="checkbox" v-model="agreeWithdraw" id="agreeWithdraw" />
-            <label for="agreeWithdraw">위 약관에 동의합니다</label>
-          </div>
+          <input type="password" v-model="withdrawPw" style="margin-top: 20px;" placeholder="현재 비밀번호 입력" />
+          
           <button class="withdraw-button" :disabled="!withdrawPw || !agreeWithdraw" @click="showWithdrawModal = true">
             탈퇴하기
           </button>
@@ -177,6 +178,12 @@ export default {
         alert(e.message);
       }
     },
+     goToTravelDetail(destId) {
+      this.$router.push({
+        name: 'TravelDetailPage',  // 라우터에 등록된 이름
+        params: { id: destId }     // 여행지 ID 파라미터 전달
+      });
+    },
     changeReviewPage(page) {
       if (page < 1 || page > this.totalReviewPages) return;
       this.currentReviewPage = page;
@@ -185,14 +192,26 @@ export default {
       if (page < 1 || page > this.totalRecommendPages) return;
       this.currentRecommendPage = page;
     },
-    async updateInfo() {
-      try {
-        await updateUserInfo(this.userInfo);
-        alert("정보가 성공적으로 수정되었습니다!");
-      } catch (error) {
-        alert(error.message || "회원정보 수정 중 문제가 발생했습니다.");
-      }
-    },
+   async updateInfo() {
+  try {
+    // 현재 로그인한 사용자 ID 가져오기
+    const userId = this.$store.getters.userInfo.id;
+    
+    // 이름과 전화번호만 서버에 전송
+    await updateUserInfo({
+      user_id: userId,
+      name: this.userInfo.name,
+      phone: this.userInfo.phone
+    });
+    
+    alert("정보가 성공적으로 수정되었습니다!");
+    // 필요한 경우 사용자 정보 갱신
+    this.$store.dispatch('fetchUser');
+  } catch (error) {
+    alert(error.message || "회원정보 수정 중 문제가 발생했습니다.");
+  }
+},
+
     async withdraw() {
       try {
         // 실제로는 비밀번호 검증 및 약관 동의 체크 필요
@@ -272,9 +291,12 @@ export default {
 }
 
 .form-container {
-  padding: 40px 48px;
-  width: 100%;
+  width: 700px;   /* 원하는 최대 너비로 조정 */
+  margin: 0 auto;     /* 중앙 정렬 */
+  padding: 48px 56px; /* 패딩도 조금 더 키우기 */
+ 
 }
+
 
 .info-edit-form .form-group {
   margin-bottom: 28px;
@@ -335,8 +357,12 @@ export default {
   border-bottom: 1px solid #f1d5db;
   font-size: 1.02rem;
   color: #a1203c;
+  cursor: pointer; /* 클릭 가능 표시 */
+  transition: background-color 0.2s;
 }
-
+.item-row:hover {
+  background-color: #f5f5f5; /* 호버 효과 */
+}
 .item-title {
   font-weight: 500;
 }
@@ -473,9 +499,7 @@ export default {
     margin-bottom: 0;
     padding: 10px 18px;
   }
-  .form-container {
-    padding: 28px 14px;
-  }
+
 }
 
 </style>

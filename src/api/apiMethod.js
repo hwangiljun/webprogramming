@@ -37,22 +37,24 @@ export const fetchCurrentUser = async () => {
   if (!res.ok) throw new Error('로그인 정보 없음');
   return await res.json();
 };
-
-// 회원 정보 수정
-export const updateUserInfo = async (data) => {
+//회원정보 수정
+export const updateUserInfo = async ({ user_id, name, phone }) => {
   const res = await fetch('http://127.0.0.1:5000/api/user/update', {
-    method: 'PATCH',
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify(data)
+    body: JSON.stringify({ user_id, name, phone })
   });
   if (!res.ok) throw new Error('회원정보 수정 실패');
   return await res.json();
 };
 
-// 내가 쓴 리뷰 조회
+
 export const fetchMyReviews = async () => {
-  const res = await fetch('http://127.0.0.1:5000/api/reviews/user/<string:user_id>', { method: 'GET', credentials: 'include' });
+  const res = await fetch('http://127.0.0.1:5000/api/reviews/my', {
+    method: 'GET',
+    credentials: 'include'
+  });
   if (!res.ok) throw new Error('내 리뷰 조회 실패');
   return await res.json();
 };
