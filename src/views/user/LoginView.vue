@@ -48,8 +48,10 @@ export default {
         });
         alert('로그인 성공!');
 
+        localStorage.setItem('user', JSON.stringify(data.user));
         // Vuex 상태 업데이트
         this.$store.commit('login', data.user);
+        
 
         // 메인 홈페이지로 이동
         this.$router.push('/');

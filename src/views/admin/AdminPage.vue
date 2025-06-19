@@ -9,46 +9,43 @@
         <ul>
           <li @click="selectMenu('place-manager')" :class="{ active: selectedMenu === 'place-manager' }">여행지 관리</li>
           <li @click="selectMenu('review-manager')" :class="{ active: selectedMenu === 'review-manager' }">리뷰 관리</li>
-          <li @click="selectMenu('user-manager')" :class="{ active: selectedMenu === 'user-manager' }">회원 관리</li>
         </ul>
       </aside>
 
       <!-- 여행지 관리 -->
       <section v-if="selectedMenu === 'place-manager'" class="section-container">
         <h2>여행지 추가/삭제</h2>
-        <form @submit.prevent="addPlace" class="add-form">
-          <input v-model="newPlace" placeholder="여행지 이름 입력" />
-          <button type="submit" :disabled="isPlaceAdding">추가</button>
-        </form>
+       <form @submit.prevent="addPlace" class="add-form" style="flex-direction:column; gap: 10px;">
+  <input v-model="newPlace.name" placeholder="여행지 이름 입력" />
+  <input v-model="newPlace.description" placeholder="설명 입력" />
+  <input v-model="newPlace.type" placeholder="유형(산, 바다, 도시 등)" />
+  <input v-model="newPlace.imageUrl" placeholder="이미지 URL 입력" />
+  <button type="submit" :disabled="isPlaceAdding" style="margin-top:10px;">추가</button>
+</form>
+
         <ul class="item-list">
-          <li v-for="place in places" :key="place.id" class="item-row">
-            <span>{{ place.name }}</span>
-            <button @click="deletePlace(place.id)" :disabled="isPlaceDeleting === place.id">삭제</button>
-          </li>
-        </ul>
+  <li v-for="place in places" :key="place._id" class="item-row">
+    <span>{{ place.name }}</span>
+    <button
+      @click="deletePlace(place._id)"
+      :disabled="isPlaceDeleting === place._id"
+    >삭제</button>
+  </li>
+</ul>
       </section>
 
       <!-- 리뷰 관리 -->
       <section v-if="selectedMenu === 'review-manager'" class="section-container">
         <h2>리뷰 삭제</h2>
         <ul class="item-list">
-          <li v-for="review in reviews" :key="review.id" class="item-row">
-            <span>{{ review.title }} - {{ review.user }}</span>
-            <button @click="deleteReview(review.id)" :disabled="isReviewDeleting === review.id">삭제</button>
-          </li>
+          <li v-for="review in reviews" :key="review._id" class="item-row">
+  <span>{{ review.content }} </span>
+  <button @click="deleteReview(review._id)">삭제</button>
+</li>
         </ul>
       </section>
 
-      <!-- 회원 관리 -->
-      <section v-if="selectedMenu === 'user-manager'" class="section-container">
-        <h2>회원 관리</h2>
-        <ul class="item-list">
-          <li v-for="user in users" :key="user.id" class="item-row">
-            <span>{{ user.name }} ({{ user.email }})</span>
-            <button @click="deleteUser(user.id)" :disabled="isUserDeleting === user.id">삭제</button>
-          </li>
-        </ul>
-      </section>
+     
     </div>
   </div>
 </template>
@@ -57,14 +54,20 @@
 import {
   fetchPlaces, addPlace as apiAddPlace, deletePlace as apiDeletePlace,
   fetchReviews, deleteReview as apiDeleteReview,
-  fetchUsers, deleteUserByAdmin
+
 } from "@/api/apiMethod";
 
 export default {
   data() {
     return {
       selectedMenu: "place-manager",
-      newPlace: "",
+      newPlace: {
+  name: "",
+  description: "",
+  type: "",
+  imageUrl: ""
+},
+
       places: [],
       reviews: [],
       users: [],
@@ -91,7 +94,7 @@ export default {
     loadCurrent() {
       if (this.selectedMenu === "place-manager") this.loadPlaces();
       if (this.selectedMenu === "review-manager") this.loadReviews();
-      if (this.selectedMenu === "user-manager") this.loadUsers();
+
     },
     async loadPlaces() {
       try {
@@ -109,28 +112,26 @@ export default {
         alert("리뷰 목록을 불러오지 못했습니다.");
       }
     },
-    async loadUsers() {
-      try {
-        const res = await fetchUsers();
-        this.users = res.content || res;
-      } catch (e) {
-        alert("회원 목록을 불러오지 못했습니다.");
-      }
-    },
     // 여행지 추가
     async addPlace() {
-      if (!this.newPlace.trim()) return;
-      this.isPlaceAdding = true;
-      try {
-        await apiAddPlace({ name: this.newPlace });
-        this.newPlace = "";
-        await this.loadPlaces();
-      } catch (e) {
-        alert("여행지 추가에 실패했습니다.");
-      } finally {
-        this.isPlaceAdding = false;
-      }
-    },
+  const { name, description, type, imageUrl } = this.newPlace;
+  if (!name.trim() || !description.trim() || !type.trim() || !imageUrl.trim()) {
+    alert("모든 항목을 입력해주세요.");
+    return;
+  }
+  this.isPlaceAdding = true;
+  try {
+    await apiAddPlace({ name, description, type, imageUrl });
+    // 폼 초기화
+    this.newPlace = { name: "", description: "", type: "", imageUrl: "" };
+    await this.loadPlaces();
+  } catch (e) {
+    alert("여행지 추가에 실패했습니다.");
+  } finally {
+    this.isPlaceAdding = false;
+  }
+},
+
     // 여행지 삭제
     async deletePlace(id) {
       if (!confirm("정말로 삭제하시겠습니까?")) return;
@@ -155,19 +156,6 @@ export default {
         alert("리뷰 삭제에 실패했습니다.");
       } finally {
         this.isReviewDeleting = null;
-      }
-    },
-    // 회원 삭제
-    async deleteUser(id) {
-      if (!confirm("정말로 삭제하시겠습니까?")) return;
-      this.isUserDeleting = id;
-      try {
-        await deleteUserByAdmin(id);
-        await this.loadUsers();
-      } catch (e) {
-        alert("회원 삭제에 실패했습니다.");
-      } finally {
-        this.isUserDeleting = null;
       }
     },
   },

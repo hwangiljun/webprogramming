@@ -42,5 +42,30 @@ const router = createRouter({
   routes,
 });
 
+
+
+// 허용할 관리자 ID 목록
+const adminOnlyIds = ['684b753d589184a5c4bd91d2', 'admin2']; // 실제 관리자 id로 수정
+
+router.beforeEach((to, from, next) => {
+  // admin 페이지 접근 시만 체크
+  if (to.name === 'AdminPage') {
+    // 예시: localStorage에 user 정보가 { id: 'admin1', ... } 형태로 저장돼 있다고 가정
+    const userStr = localStorage.getItem('user');
+    let user = null;
+    try {
+      user = userStr ? JSON.parse(userStr) : null;
+    } catch (e) {
+      user = null;
+    }
+
+    if (!user || !adminOnlyIds.includes(user.id)) {
+      alert('관리자만 접근 가능합니다.');
+      return next('/'); 
+    }
+  }
+  next();
+});
+
 // 라우터 내보내기
 export default router;

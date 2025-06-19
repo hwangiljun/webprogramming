@@ -41,7 +41,7 @@
       <!-- 내가 쓴 리뷰 -->
        <section v-if="selectedMenu === 'myreviews'" class="mypost-list">
     <div class="form-container">
-      <h2>내가 쓴 리뷰</h2>
+      <h2 style="padding-bottom: 20px;">내가 쓴 리뷰</h2>
       <ul class="item-list">
         <li 
           v-for="review in pagedReviews" 

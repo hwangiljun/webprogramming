@@ -68,12 +68,20 @@ export default {
     }
   },
   methods: {
-    logout() {
-      this.$store.commit('logout');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user'); // user 정보도 삭제
-      this.$router.push('/');
+    async logout() {
+    try {
+      await fetch('http://127.0.0.1:5000/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (e) {
+      // 서버가 죽었거나 네트워크 오류 등은 무시
     }
+    this.$store.commit('logout');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.$router.push('/');
+  }
   },
   mounted() {
     // 새로고침 시 localStorage에서 user 정보 복원

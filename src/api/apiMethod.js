@@ -60,22 +60,17 @@ export const fetchMyReviews = async () => {
 };
 
 
-export const deleteUser = async ({ user_id, password }) => {
+// 회원 탈퇴
+export const deleteUser = async ({ password }) => {
   const res = await fetch('http://127.0.0.1:5000/api/user/delete', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ user_id, password })
+    body: JSON.stringify({ password })
   });
-  
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || '회원 탈퇴 실패');
-  }
-  
+  if (!res.ok) throw new Error('회원 탈퇴 실패');
   return await res.json();
 };
-
 
 // 여행지 목록 불러오기
 export const fetchPlaces = async () => {
@@ -99,9 +94,9 @@ export const addPlace = async (data) => {
   return await res.json();
 };
 
-// 여행지 삭제
-export const deletePlace = async () => {
-  const res = await fetch(`http://127.0.0.1:5000/api/destinations/delete/<string:dest_id>`, {
+//여행지 삭제
+export const deletePlace = async (id) => {
+  const res = await fetch(`http://127.0.0.1:5000/api/destinations/delete/${id}`, {
     method: 'DELETE',
     credentials: 'include'
   });
@@ -109,13 +104,14 @@ export const deletePlace = async () => {
   // 성공 시 별도의 반환값 없음
 };
 
+
 // 리뷰 목록 불러오기
 export const fetchReviews = async () => {
-  const res = await fetch('http://127.0.0.1:5000', {
+  const res = await fetch('http://127.0.0.1:5000/api/reviews/all', {
     method: 'GET',
     credentials: 'include'
   });
-  if (!res.ok) throw new Error('   목록 조회 실패');
+  if (!res.ok) throw new Error('리뷰 목록 조회 실패');
   return await res.json();
 };
 // 여행지별 리뷰 목록 불러오기
