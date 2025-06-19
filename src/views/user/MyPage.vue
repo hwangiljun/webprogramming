@@ -15,9 +15,6 @@
           <li @click="selectMenu('myreviews')" :class="{ active: selectedMenu === 'myreviews' }">
             내가 쓴 리뷰
           </li>
-          <li @click="selectMenu('myrecommend')" :class="{ active: selectedMenu === 'myrecommend' }">
-            내가 추천받은 여행지
-          </li>
           <li @click="selectMenu('withdraw')" :class="{ active: selectedMenu === 'withdraw' }">
             회원 탈퇴
           </li>
@@ -66,34 +63,13 @@
         </div>
       </section>
 
-      <!-- 내가 추천받은 여행지 -->
-      <section v-if="selectedMenu === 'myrecommend'" class="myrecommend-list">
-        <div class="form-container">
-          <h2>내가 추천받은 여행지</h2>
-          <ul class="item-list">
-            <li v-for="place in pagedRecommends" :key="place.id" class="item-row">
-              <span class="item-title">{{ place.name }}</span>
-              <span class="item-date">{{ formatDate(place.recommendedAt) }}</span>
-            </li>
-          </ul>
-          <div class="pagination" v-if="totalRecommendPages > 0" style="margin-top:20px; display:flex; justify-content:center; gap:8px;">
-            <button @click="changeRecommendPage(currentRecommendPage - 1)" :disabled="currentRecommendPage === 1">이전</button>
-            <button v-for="page in totalRecommendPages" :key="page" @click="changeRecommendPage(page)" :class="{active: currentRecommendPage === page}">
-              {{ page }}
-            </button>
-            <button @click="changeRecommendPage(currentRecommendPage + 1)" :disabled="currentRecommendPage === totalRecommendPages">다음</button>
-          </div>
-          <p v-if="myRecommends.length === 0">추천받은 여행지가 없습니다.</p>
-        </div>
-      </section>
-
       <!-- 회원 탈퇴 폼 -->
       <section class="withdraw-form" v-if="selectedMenu === 'withdraw'">
         <div class="form-container">
           <h2>회원 탈퇴</h2>
           <input type="password" v-model="withdrawPw" style="margin-top: 20px;" placeholder="현재 비밀번호 입력" />
           
-          <button class="withdraw-button" :disabled="!withdrawPw || !agreeWithdraw" @click="showWithdrawModal = true">
+          <button class="withdraw-button" :disabled="!withdrawPw" @click="showWithdrawModal = true">
             탈퇴하기
           </button>
         </div>
@@ -117,7 +93,6 @@ import {
   updateUserInfo,
   deleteUser,
   fetchMyReviews,
-  fetchMyRecommends,
 } from "@/api/apiMethod";
 
 export default {
@@ -129,7 +104,6 @@ export default {
         phone: "",
       },
       myReviews: [],
-      myRecommends: [],
       showWithdrawModal: false,
       withdrawPw: "",
       agreeWithdraw: false,
@@ -148,9 +122,6 @@ export default {
       const start = (this.currentReviewPage - 1) * this.reviewsPerPage;
       return this.myReviews.slice(start, start + this.reviewsPerPage);
     },
-    totalRecommendPages() {
-      return Math.ceil(this.myRecommends.length / this.recommendsPerPage);
-    },
     pagedRecommends() {
       const start = (this.currentRecommendPage - 1) * this.recommendsPerPage;
       return this.myRecommends.slice(start, start + this.recommendsPerPage);
@@ -166,14 +137,6 @@ export default {
       try {
         const data = await fetchMyReviews();
         this.myReviews = data.content || data;
-      } catch (e) {
-        alert(e.message);
-      }
-    },
-    async loadMyRecommends() {
-      try {
-        const data = await fetchMyRecommends();
-        this.myRecommends = data.content || data;
       } catch (e) {
         alert(e.message);
       }

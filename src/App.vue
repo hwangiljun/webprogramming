@@ -4,17 +4,20 @@
       <AppHeader />
       <!-- 페이지 컴포넌트가 이 자리에 렌더링됩니다 -->
       <router-view />
+      <AppFooter />
     </div>
   </div>
 </template>
 
 <script>
 import AppHeader from '@/components/AppHeader.vue';
+import AppFooter from './components/AppFooter.vue';
 
 export default {
   name: 'App',
   components: {
-    AppHeader
+    AppHeader,
+    AppFooter
   },
   created() {
     // 앱이 시작될 때 로그인 상태 복구

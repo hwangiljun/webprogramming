@@ -59,24 +59,23 @@ export const fetchMyReviews = async () => {
   return await res.json();
 };
 
-// 추천받은 여행지 조회
-export const fetchMyRecommends = async () => {
-  const res = await fetch('http://127.0.0.1:5000', { method: 'GET', credentials: 'include' });
-  if (!res.ok) throw new Error('추천 여행지 조회 실패');
-  return await res.json();
-};
 
-// 회원 탈퇴
-export const deleteUser = async ({ password }) => {
+export const deleteUser = async ({ user_id, password }) => {
   const res = await fetch('http://127.0.0.1:5000/api/user/delete', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ password })
+    body: JSON.stringify({ user_id, password })
   });
-  if (!res.ok) throw new Error('회원 탈퇴 실패');
+  
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || '회원 탈퇴 실패');
+  }
+  
   return await res.json();
 };
+
 
 // 여행지 목록 불러오기
 export const fetchPlaces = async () => {
@@ -116,7 +115,7 @@ export const fetchReviews = async () => {
     method: 'GET',
     credentials: 'include'
   });
-  if (!res.ok) throw new Error('리뷰 목록 조회 실패');
+  if (!res.ok) throw new Error('   목록 조회 실패');
   return await res.json();
 };
 // 여행지별 리뷰 목록 불러오기
@@ -180,3 +179,4 @@ export const deleteUserByAdmin = async () => {
   // 성공 시 별도의 반환값 없음
 };
 
+//ai api

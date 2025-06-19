@@ -64,55 +64,28 @@ export default {
     closeModal() {
       this.isModalVisible = false;
     },
-    // AI 추천 로직을 실행하는 메소드입니다.
+     //ai api사용
     async getAiRecommendation(preferences) {
-      console.log('선택된 취향:', preferences);
-      // 1. 전체 여행지 목록을 가져옵니다.
-      await this.fetchAllTravels();
-      const allTravels = this.$store.state.travel.travels;
-
-      // 2. 간단한 태그 기반 추천 로직
-      const recommendationMap = {
-        '혼자': ['도시', '문화'],
-        '친구와': ['도시', '해변', '인기'],
-        '연인과': ['해변', '문화', '자연'],
-        '가족과': ['자연', '섬'],
-        '활동적인': ['해변', '자연'],
-        '여유로운': ['문화', '섬'],
-        '맛집탐방': ['도시', '인기']
-      };
-      
-      const desiredTags = [
-        ...(recommendationMap[preferences.companion] || []),
-        ...(recommendationMap[preferences.interest] || []),
-      ];
-
-      let bestMatch = null;
-      let maxScore = -1;
-
-      allTravels.forEach(travel => {
-        let score = 0;
-        const travelTags = travel.type ? travel.type.split(', ') : [];
-        desiredTags.forEach(tag => {
-          if (travelTags.includes(tag)) {
-            score++;
-          }
-        });
-
-        if (score > maxScore) {
-          maxScore = score;
-          bestMatch = travel;
-        } else if (score === maxScore && Math.random() > 0.5) {
-          bestMatch = travel;
-        }
-      });
-
-      // 3. 가장 점수가 높은 여행지의 상세 페이지로 이동합니다.
-      const targetTravel = bestMatch || allTravels[Math.floor(Math.random() * allTravels.length)];
-      if (targetTravel) {
-        this.$router.push({ name: 'TravelDetailPage', params: { id: targetTravel.id } });
-      }
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/ai_recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preferences })
+    });
+    if (!response.ok) throw new Error('AI 추천 요청 실패');
+    const data = await response.json();
+    const { id } = data;
+    if (id) {
+      this.$router.push({ name: 'TravelDetailPage', params: { id } });
+    } else {
+      alert('추천 결과가 없습니다.');
     }
+  } catch (error) {
+    alert('AI 추천에 실패했습니다.');
+    console.error(error);
+  }
+},
+
   },
   created() {
     this.handleCategorySelect('인기');
